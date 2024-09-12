@@ -1,23 +1,16 @@
 import { Module } from "@nestjs/common";
-import { RouterModule } from "@nestjs/core";
+import { ConfigModule } from "@nestjs/config";
+import { PrivateModule } from "./api_private/private.module";
 import { PublicModule } from "./api_public/public.module";
-import { TestModule } from "./api_public/test/test.module";
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: `.env.${process.env.NODE_ENV || "development"}`,
+      isGlobal: true,
+    }),
     PublicModule,
-    RouterModule.register([
-      {
-        path: "public",
-        module: PublicModule,
-        children: [
-          {
-            path: "test",
-            module: TestModule,
-          },
-        ],
-      },
-    ]),
+    PrivateModule,
   ],
 })
 export class AppModule {}
